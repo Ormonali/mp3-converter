@@ -1,11 +1,6 @@
 @component('mail::message')
-# Ваш запрос на mp3
+# Ваш запрос на  {{$name}}
 
-
-@component('mail::button', ['url' => 'http://localhost/mp3-converter/public/download/{{$filename}}'])
-Скачать
-@endcomponent
-
-Thanks,<br>
-{{ config('app.name') }}
+Нажите на ссылку чтобы скачать
+{{$file}}
 @endcomponent

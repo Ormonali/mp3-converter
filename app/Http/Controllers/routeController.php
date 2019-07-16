@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Jobs\sendMail;
 include '../vendor/autoload.php';
 use YoutubeDl\YoutubeDl;
+use Illuminate\Support\Facades\Response;
 
 class routeController extends Controller
 {
@@ -16,18 +17,24 @@ class routeController extends Controller
     public function sendMail(Request $request){
        $email=$request->get('email');
        $link=$request->get('url');
-      
-       sendMail::dispatch($email,$link);
+     
+        sendMail::dispatch($email,$link);
         
         return redirect()->route('success');
     }
     
     public function success(){
+    
         return view('success');
+   
     }
 
     public function download($filename){
-    $file = 'public/converted'.$filename;
-    return Response::download($file);
+    $filename = str_replace('_',' ',$filename);
+
+    $file = '../public/converted/'.$filename;
+    
+        return Response::download($file);
+   
     }
 }

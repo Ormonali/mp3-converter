@@ -52,7 +52,9 @@ class sendMail implements ShouldQueue
         $dl->setDownloadPath('public/converted');
         $dl->setBinPath('/usr/local/bin/youtube-dl');
         $audio = $dl->download($this->link);  
-        $filename = array('path'=>$audio->get('_filename'));
-        Mail::to($this->email)->subject('Ваш запрос на mp3')->send(new mailQuery($filename));
+        $filename = str_replace(' ', '_', $audio->get('_filename'));
+        $title = $audio->getTitle();
+        $file = array('path' => 'http://localhost/mp3-converter/public/download/'.$filename,'name' =>$title);
+        Mail::to($this->email)->send(new mailQuery($file));
     }
 }

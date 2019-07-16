@@ -11,16 +11,18 @@ use Illuminate\Mail\Markdown;
 class mailQuery extends Mailable
 {
     use Queueable, SerializesModels;
-    protected $filename;
+    public $file;
+    public $name;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($filename)
+    public function __construct($file)
     {
-        $this->filename;
+        $this->file = $file['path'];
+        $this->name = $file['name'];
     }
 
     /**
@@ -30,6 +32,6 @@ class mailQuery extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.mail');
+        return $this->subject('Ваш зарпос на сайте mp3-converter')->from('kaarov8@gmail.com','mp3-converter')->markdown('emails.mail');
     }
 }
