@@ -12,6 +12,9 @@
 */
 
 Route::get('/','routeController@index')->name('index');
-Route::get('/success','routeController@success')->name('success');
+
 Route::post('/sendMail','routeController@sendMail')->name('sendMail');
 
+Route::get('/success','routeController@success')->name('success');
+
+Route::get('/download/{filename}','routeController@download')->name('download');

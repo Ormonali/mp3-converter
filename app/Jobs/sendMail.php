@@ -8,7 +8,12 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Mail;
-
+require __DIR__. '../../../vendor/autoload.php';
+use YoutubeDl\YoutubeDl;
+use YoutubeDl\Exception\CopyrightException;
+use YoutubeDl\Exception\NotFoundException;
+use YoutubeDl\Exception\PrivateVideoException;
+use App\Mail\mailQuery;
 class sendMail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -16,16 +21,16 @@ class sendMail implements ShouldQueue
     protected $email;
     protected $link;
 
-    public $tries = 5;
+    public $tries = 1;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($email,$link)
     {
-        $this->email = $data['email'];
-        $this->link = $data['link'];
+        $this->email = $email;
+        $this->link = $link;
     }
 
     /**
@@ -35,9 +40,19 @@ class sendMail implements ShouldQueue
      */
     public function handle()
     {
-        Mail::send(['text'=>'mail'],['name','some'],function($message){
-            $message->to($this->email)->subject('Ваш запрос на mp3');
-            $message->from('kaarov8@gmail.com','Ormonali');
-        });
+        $dl = new YoutubeDl([
+            'extract-audio' => true,
+            'audio-format' => 'mp3',
+            'audio-quality' => 0, 
+            'prefer-ffmpeg'=>true,
+            'ffmpeg-location' => '/usr/bin/ffmpeg',
+            'output'=>'%(title)s.%(ext)s',
+        ]);
+    
+        $dl->setDownloadPath('public/converted');
+        $dl->setBinPath('/usr/local/bin/youtube-dl');
+        $audio = $dl->download($this->link);  
+        $filename = array('path'=>$audio->get('_filename'));
+        Mail::to($this->email)->subject('Ваш запрос на mp3')->send(new mailQuery($filename));
     }
 }

@@ -6,19 +6,21 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Markdown;
 
 class mailQuery extends Mailable
 {
     use Queueable, SerializesModels;
+    protected $filename;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($filename)
     {
-        //
+        $this->filename;
     }
 
     /**
@@ -28,6 +30,6 @@ class mailQuery extends Mailable
      */
     public function build()
     {
-        return $this->view('mail');
+        return $this->markdown('emails.mail');
     }
 }
